@@ -1,0 +1,69 @@
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, "Segoe UI", sans-serif;
+  background: #f5f6f8;
+  color: #222;
+  line-height: 1.5;
+}
+header {
+  background: #1e2a3a;
+  color: #fff;
+  padding: 14px 20px;
+}
+header a { color: #fff; text-decoration: none; font-weight: bold; font-size: 1.2rem; }
+main { max-width: 720px; margin: 0 auto; padding: 20px 16px 60px; }
+footer { text-align: center; color: #888; font-size: 0.85rem; padding: 20px; }
+
+h1 { margin: 10px 0 6px; }
+.lead { color: #555; margin-top: 0; }
+
+/* כרטיסים בדף הבית */
+.tools { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 20px; }
+.tool {
+  display: block; background: #fff; border-radius: 12px; padding: 20px;
+  text-decoration: none; color: inherit; box-shadow: 0 1px 4px rgba(0,0,0,.08);
+}
+.tool:hover { box-shadow: 0 3px 10px rgba(0,0,0,.15); }
+.tool h2 { margin: 0 0 6px; }
+.tool p { margin: 0; color: #666; }
+.tool.soon { opacity: .55; pointer-events: none; }
+.badge { display: inline-block; background: #eee; border-radius: 6px; padding: 2px 8px; font-size: .8rem; margin-top: 10px; }
+
+/* שאלון */
+.progress { background: #e1e4e8; height: 8px; border-radius: 4px; overflow: hidden; }
+.bar { background: #2f80ed; height: 100%; transition: width .3s; }
+.stepnum { color: #777; font-size: .9rem; margin: 8px 0 12px; }
+.card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+.card h2 { margin-top: 0; }
+.intro { color: #666; margin-top: -6px; }
+.field { margin-bottom: 14px; }
+.field label { display: block; font-weight: bold; margin-bottom: 4px; }
+.hint { display: block; color: #888; margin-bottom: 4px; }
+.req { color: #d33; }
+input, textarea, select {
+  width: 100%; padding: 10px; font-size: 1rem; font-family: inherit;
+  border: 1px solid #ccd; border-radius: 8px; background: #fff;
+}
+input:focus, textarea:focus, select:focus { outline: 2px solid #2f80ed; border-color: transparent; }
+.invalid { border-color: #d33; background: #fff5f5; }
+fieldset.item { border: 1px solid #dde; border-radius: 10px; padding: 14px; margin: 0 0 14px; }
+fieldset.item legend { font-weight: bold; padding: 0 6px; }
+
+/* כפתורים */
+.nav { display: flex; justify-content: space-between; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+.btn {
+  display: inline-block; border: none; border-radius: 8px; padding: 11px 20px;
+  font-size: 1rem; font-family: inherit; cursor: pointer; text-decoration: none;
+  background: #2f80ed; color: #fff;
+}
+.btn:hover { background: #1c6dd8; }
+.btn.secondary { background: #e8eef7; color: #1e2a3a; }
+.btn.secondary:hover { background: #d6e1f0; }
+.link { background: none; border: none; color: #2f80ed; cursor: pointer; font-size: .95rem; padding: 0; font-family: inherit; }
+.link.danger { color: #d33; }
+
+.prompt { font-family: Consolas, monospace; font-size: .9rem; direction: rtl; background: #fafafa; }
+.status { color: #1a8f3c; font-weight: bold; margin-inline-start: 10px; }
+.howto { padding-inline-start: 20px; }
+.note { background: #fff8e1; border-radius: 8px; padding: 10px 14px; font-size: .9rem; color: #6b5800; }
