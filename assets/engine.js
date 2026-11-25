@@ -132,6 +132,47 @@ function createWizard(config, root) {
       status.textContent = 'הועתק ✓';
     };
 
+    // אפשרות אוטומטית (רק אם הוגדר שרת)
+    if (typeof AI_ENDPOINT === 'string' && AI_ENDPOINT) {
+      const agree = el('input', { type: 'checkbox', id: 'ai-agree' });
+      const msg = el('p', { class: 'ai-msg' });
+      const btn = el('button', { type: 'button', class: 'btn ai-btn' }, '✨ צור לי אוטומטית');
+      btn.addEventListener('click', async () => {
+        msg.className = 'ai-msg';
+        if (!agree.checked) { msg.textContent = 'כדי להמשיך, סמן את תיבת ההסכמה.'; msg.classList.add('error'); return; }
+        btn.disabled = true;
+        msg.textContent = 'יוצר... זה יכול לקחת עד דקה.';
+        try {
+          const r = await fetch(AI_ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt: text })
+          });
+          const j = await r.json().catch(() => ({}));
+          if (!r.ok || !j.text) throw new Error(j.error || 'fail');
+          extractJSON(j.text); // בדיקה שהתשובה תקינה
+          data._answer = j.text;
+          data._edits = {};
+          save();
+          location.href = '/results/?t=' + config.id;
+        } catch (e) {
+          btn.disabled = false;
+          msg.classList.add('error');
+          msg.textContent = e.message === 'quota'
+            ? 'השירות האוטומטי עמוס היום. אפשר להשתמש בהעתקה והדבקה למטה, זה לוקח דקה.'
+            : 'משהו השתבש. נסה שוב, או השתמש בהעתקה והדבקה למטה.';
+        }
+      });
+      root.append(el('div', { class: 'card ai-card' },
+        el('h2', {}, 'הדרך המהירה ✨'),
+        el('p', { class: 'intro' }, 'האתר ישלח את התשובות שלך ל-Gemini של גוגל ויציג את התוצאה. בלי העתקות.'),
+        el('label', { class: 'agree', for: 'ai-agree' }, agree,
+          ' אני מסכים שהמידע יישלח ל-Google Gemini. במסלול החינמי גוגל עשוי להשתמש בו לשיפור המוצרים שלו. ',
+          el('a', { href: '/privacy/', target: '_blank' }, 'פרטים')),
+        btn, msg));
+      root.append(el('p', { class: 'or' }, 'או, בלי לשלוח מידע דרכנו:'));
+    }
+
     root.append(el('div', { class: 'card' },
       el('h2', {}, 'שלב 1: העתק את הפרומפט'),
       el('p', { class: 'intro' }, 'העתק, פתח את ChatGPT או Claude, הדבק ושלח.'),

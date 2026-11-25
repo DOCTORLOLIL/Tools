@@ -179,3 +179,13 @@ main.wide { max-width: 860px; }
 .empty-note:hover { background: #f5f8fd; color: #2f80ed; }
 .editable.empty h3 { color: #aab; }
 @media print { .editable.empty { display: none !important; } }
+
+/* יצירה אוטומטית */
+.ai-card { border: 2px solid #c9b8ff; background: linear-gradient(180deg, #fbf9ff, #fff); }
+.ai-btn { background: linear-gradient(90deg, #2f80ed, #7b5cff); font-size: 1.1rem; padding: 13px 26px; }
+.ai-btn:hover { filter: brightness(1.08); background: linear-gradient(90deg, #2f80ed, #7b5cff); }
+.ai-btn:disabled { opacity: .6; cursor: wait; }
+.agree { display: flex; gap: 8px; align-items: flex-start; font-size: .9rem; color: #555; margin: 4px 0 14px; cursor: pointer; }
+.agree input { width: auto; margin-top: 4px; flex: none; }
+.ai-msg { margin: 10px 0 0; color: #555; }
+.or { text-align: center; color: #888; margin: 18px 0 10px; }
