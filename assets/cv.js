@@ -156,10 +156,9 @@ const cvConfig = {
       : { summary: 'תקציר', exp: 'ניסיון תעסוקתי', svc: d.svcType && d.svcType !== 'none' ? 'שירות ' + d.svcType : 'שירות',
           edu: 'השכלה', skills: 'כישורים', langs: 'שפות', extra: 'נוסף' };
 
-    const section = (title, ...content) => {
-      content = content.filter(Boolean);
-      return content.length ? el('section', { 'data-key': title }, el('h3', {}, title), ...content) : null;
-    };
+    // מקטע תמיד מוצג; אם הוא ריק – דף התוצאות מסמן אותו ולא מדפיס אותו
+    const section = (title, ...content) =>
+      el('section', { 'data-key': title }, el('h3', {}, title), ...content.filter(Boolean));
     const item = (head, sub, years, bullets) => el('div', { class: 'cv-item' },
       el('div', { class: 'cv-row' }, el('strong', {}, head), years ? el('span', { class: 'cv-years' }, years) : null),
       sub ? el('div', { class: 'cv-sub' }, sub) : null,
@@ -191,7 +190,7 @@ const cvConfig = {
         contactLine),
       section(T.summary, s(cv.summary) ? el('p', {}, s(cv.summary)) : null),
       section(T.exp, ...exp),
-      section(T.svc, svc),
+      d.svcType === 'none' && !svc ? null : section(T.svc, svc),
       section(T.edu, ...edu),
       section(T.skills, inline(arr(cv.skills))),
       section(T.langs, inline(arr(cv.languages))),

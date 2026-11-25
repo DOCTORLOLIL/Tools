@@ -170,3 +170,12 @@ main.wide { max-width: 860px; }
   .toolbar, .hint, .edit-bar { display: none !important; }
   .editing { outline: none; }
 }
+
+/* מקטע ריק */
+.empty-note {
+  color: #999; font-style: italic; border: 1px dashed #ccd; border-radius: 6px;
+  padding: 8px 10px; cursor: pointer; font-size: 9.5pt;
+}
+.empty-note:hover { background: #f5f8fd; color: #2f80ed; }
+.editable.empty h3 { color: #aab; }
+@media print { .editable.empty { display: none !important; } }

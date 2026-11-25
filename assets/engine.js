@@ -233,21 +233,46 @@ function showResults(configs, root) {
     wrap.append(bar, sec);
     let before = '';
 
+    const isEmpty = () => {
+      const c = sec.cloneNode(true);
+      c.querySelectorAll('h3, .empty-note').forEach(x => x.remove());
+      return !c.textContent.trim();
+    };
+    const clearNote = () => sec.querySelectorAll('.empty-note').forEach(x => x.remove());
+    const mark = () => {
+      clearNote();
+      const e = isEmpty();
+      wrap.classList.toggle('empty', e);
+      if (e) sec.append(el('p', { class: 'empty-note', contenteditable: 'false', onclick: () => start() },
+        'מקטע זה ריק ולא יופיע בתוצאה הסופית. למילוי ידני לחץ כאן.'));
+    };
+
     const idle = () => {
       bar.innerHTML = '';
-      bar.append(el('button', { type: 'button', class: 'edit-btn', title: 'עריכה', onclick: start }, '✎ ערוך'));
+      bar.append(el('button', { type: 'button', class: 'edit-btn', title: 'עריכה', onclick: () => start() }, '✎ ערוך'));
     };
     const start = () => {
+      if (wrap.classList.contains('editing')) return;
+      clearNote();
       before = sec.innerHTML;
       sec.contentEditable = 'true';
       wrap.classList.add('editing');
+      let target = sec;
+      if (isEmpty()) { // מקטע ריק – פותחים שורה לכתיבה
+        target = el('p', {}, el('br'));
+        sec.append(target);
+      }
       sec.focus();
+      const r = document.createRange();
+      r.selectNodeContents(target); r.collapse(false);
+      const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
       bar.innerHTML = '';
       bar.append(
         el('button', { type: 'button', class: 'edit-btn save', onclick: finish }, '✓ שמור'),
         el('button', { type: 'button', class: 'edit-btn', onclick: () => { sec.innerHTML = before; stop(); } }, 'בטל'));
     };
     const finish = () => {
+      if (isEmpty()) { sec.querySelectorAll('p').forEach(p => { if (!p.textContent.trim()) p.remove(); }); }
       data._edits[key] = sec.innerHTML;
       save();
       stop();
@@ -255,8 +280,10 @@ function showResults(configs, root) {
     const stop = () => {
       sec.contentEditable = 'false';
       wrap.classList.remove('editing');
+      mark();
       idle();
     };
+    mark();
     idle();
   });
 }

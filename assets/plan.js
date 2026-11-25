@@ -125,10 +125,9 @@ const planConfig = {
     };
     const num = x => { const n = typeof x === 'number' ? x : Number(String(x).replace(/[^\d.-]/g, '')); return isFinite(n) ? n : 0; };
 
-    const section = (title, ...content) => {
-      content = content.filter(Boolean);
-      return content.length ? el('section', { 'data-key': title }, el('h3', {}, title), ...content) : null;
-    };
+    // מקטע תמיד מוצג; אם הוא ריק – דף התוצאות מסמן אותו ולא מדפיס אותו
+    const section = (title, ...content) =>
+      el('section', { 'data-key': title }, el('h3', {}, title), ...content.filter(Boolean));
     const para = x => (s(x) ? el('p', {}, s(x)) : null);
     const list = x => (arr(x).length ? el('ul', {}, ...arr(x).map(i => el('li', {}, i))) : null);
     const table = (head, rows) => rows.length
