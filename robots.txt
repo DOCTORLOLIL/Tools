@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /results/
+Sitemap: https://tools.bulu.ltd/sitemap.xml
