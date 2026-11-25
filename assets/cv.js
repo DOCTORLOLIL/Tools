@@ -3,6 +3,8 @@
 const cvConfig = {
   id: 'cv',
   resultLabel: 'הצג קורות חיים',
+  resultTitle: 'קורות החיים שלי',
+  page: '/cv/',
   steps: [
     {
       title: 'פרטים אישיים',
@@ -156,7 +158,7 @@ const cvConfig = {
 
     const section = (title, ...content) => {
       content = content.filter(Boolean);
-      return content.length ? el('section', {}, el('h3', {}, title), ...content) : null;
+      return content.length ? el('section', { 'data-key': title }, el('h3', {}, title), ...content) : null;
     };
     const item = (head, sub, years, bullets) => el('div', { class: 'cv-item' },
       el('div', { class: 'cv-row' }, el('strong', {}, head), years ? el('span', { class: 'cv-years' }, years) : null),
@@ -183,9 +185,10 @@ const cvConfig = {
       .map(e => item(s(e.degree), [s(e.institution), s(e.notes)].filter(Boolean).join(' · '), s(e.years), []));
 
     return el('div', { dir: en ? 'ltr' : 'rtl', lang: en ? 'en' : 'he' },
-      el('h2', { class: 'cv-name' }, s(cv.name) || s(d.fullName)),
-      s(cv.title) ? el('div', { class: 'cv-title' }, s(cv.title)) : null,
-      contactLine,
+      el('section', { 'data-key': 'header' },
+        el('h2', { class: 'cv-name' }, s(cv.name) || s(d.fullName)),
+        s(cv.title) ? el('div', { class: 'cv-title' }, s(cv.title)) : null,
+        contactLine),
       section(T.summary, s(cv.summary) ? el('p', {}, s(cv.summary)) : null),
       section(T.exp, ...exp),
       section(T.svc, svc),
@@ -196,4 +199,3 @@ const cvConfig = {
   }
 };
 
-createWizard(cvConfig, document.getElementById('app'));

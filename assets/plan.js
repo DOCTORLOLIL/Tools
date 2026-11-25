@@ -1,8 +1,10 @@
 /* מחולל תכנית עסקית – הגדרות השאלון, הפרומפט והתבנית */
 
-const bizConfig = {
-  id: 'biz',
+const planConfig = {
+  id: 'plan',
   resultLabel: 'הצג תכנית עסקית',
+  resultTitle: 'התכנית העסקית שלי',
+  page: '/plan/',
   steps: [
     {
       title: 'העסק',
@@ -125,7 +127,7 @@ const bizConfig = {
 
     const section = (title, ...content) => {
       content = content.filter(Boolean);
-      return content.length ? el('section', {}, el('h3', {}, title), ...content) : null;
+      return content.length ? el('section', { 'data-key': title }, el('h3', {}, title), ...content) : null;
     };
     const para = x => (s(x) ? el('p', {}, s(x)) : null);
     const list = x => (arr(x).length ? el('ul', {}, ...arr(x).map(i => el('li', {}, i))) : null);
@@ -145,9 +147,10 @@ const bizConfig = {
     const fc = objs(b.forecast);
 
     return el('div', { dir: 'rtl', lang: 'he' },
-      el('h2', { class: 'cv-name' }, s(b.name) || 'תכנית עסקית'),
-      s(b.tagline) ? el('div', { class: 'cv-title' }, s(b.tagline)) : null,
-      el('div', { class: 'cv-contact' }, 'טיוטת תכנית עסקית'),
+      el('section', { 'data-key': 'header' },
+        el('h2', { class: 'cv-name' }, s(b.name) || 'תכנית עסקית'),
+        s(b.tagline) ? el('div', { class: 'cv-title' }, s(b.tagline)) : null,
+        el('div', { class: 'cv-contact' }, 'טיוטת תכנית עסקית')),
       section('תקציר', para(b.summary)),
       section('הבעיה והפתרון', para(b.problem), para(b.solution)),
       section('קהל היעד', para(b.audience)),
@@ -165,4 +168,3 @@ const bizConfig = {
   }
 };
 
-createWizard(bizConfig, document.getElementById('app'));

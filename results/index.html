@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>התוצאה שלי | BULU</title>
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header><a href="/">← מחוללים | BULU</a></header>
+  <main class="wide">
+    <div id="app"></div>
+  </main>
+  <footer><a href="https://bulu.ltd">BULU</a> · <a href="/privacy/">פרטיות</a> · <a href="#" onclick="buluCookieSettings();return false">עוגיות</a></footer>
+  <script src="/assets/engine.js"></script>
+  <script src="/assets/cv.js"></script>
+  <script src="/assets/plan.js"></script>
+  <script>showResults({ cv: cvConfig, plan: planConfig }, document.getElementById('app'));</script>
+  <script src="/assets/cookies.js"></script>
+</body>
+</html>

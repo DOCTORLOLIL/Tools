@@ -5,19 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>מחולל קורות חיים בעברית | BULU</title>
   <meta name="description" content="ממלאים שאלון קצר ומקבלים פרומפט מוכן ל-ChatGPT או Claude, שיכתוב לכם קורות חיים מקצועיים בעברית או באנגלית. חינם.">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/assets/style.css">
 </head>
 <body>
-  <header><a href="./">← מחוללים | BULU</a></header>
+  <header><a href="/">← מחוללים | BULU</a></header>
   <main>
-    <h1>מחולל קורות חיים</h1>
-    <p class="lead">ממלאים, מעתיקים, ומדביקים ב-ChatGPT או Claude.</p>
+    <h1>📄 מחולל קורות חיים</h1>
+    <p class="lead">ממלאים, מעתיקים ל-ChatGPT או Claude, ומדביקים את התשובה בחזרה.</p>
     <p class="note">מה שאתה ממלא נשמר רק בדפדפן שלך. אנחנו לא רואים ולא שומרים כלום.</p>
     <div id="app"></div>
   </main>
-  <footer>BULU · שירות חינמי לציבור · <a href="privacy.html">פרטיות</a> · <a href="#" onclick="buluCookieSettings();return false">עוגיות</a></footer>
-  <script src="engine.js"></script>
-  <script src="cv.js"></script>
-  <script src="cookies.js"></script>
+  <footer><a href="https://bulu.ltd">BULU</a> · <a href="/privacy/">פרטיות</a> · <a href="#" onclick="buluCookieSettings();return false">עוגיות</a></footer>
+  <script src="/assets/engine.js"></script>
+  <script src="/assets/cv.js"></script>
+  <script>createWizard(cvConfig, document.getElementById('app'));</script>
+  <script src="/assets/cookies.js"></script>
 </body>
 </html>

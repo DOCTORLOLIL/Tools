@@ -3,27 +3,79 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>מחוללים | BULU</title>
-  <meta name="description" content="מחוללים חינמיים בעברית: קורות חיים ותכנית עסקית בעזרת ChatGPT או Claude.">
-  <link rel="stylesheet" href="style.css">
+  <title>מחוללים | קורות חיים ותכנית עסקית בעזרת AI – חינם | BULU</title>
+  <meta name="description" content="מחוללים חינמיים בעברית: ממלאים שאלון קצר, מקבלים פרומפט מוכן ל-ChatGPT או Claude, ומורידים קורות חיים או תכנית עסקית מעוצבים ב-PDF.">
+  <link rel="stylesheet" href="/assets/style.css">
 </head>
-<body>
-  <header><a href="./">מחוללים | BULU</a></header>
+<body class="home">
   <main>
-    <h1>מחוללים</h1>
-    <p class="lead">ממלאים שאלון קצר, ומקבלים פרומפט מוכן להדבקה ב-ChatGPT או Claude. חינם, בעברית.</p>
-    <div class="tools">
-      <a class="tool" href="cv.html">
-        <h2>📄 קורות חיים</h2>
-        <p>קורות חיים מקצועיים בעברית או באנגלית, בפורמט ישראלי.</p>
+    <section class="hero">
+      <div class="hero-text">
+        <h1>מחוללים</h1>
+        <p class="hero-sub">קורות חיים ותכנית עסקית, בעזרת ChatGPT או Claude.<br>בעברית, בחינם, בלי הרשמה.</p>
+      </div>
+      <svg class="hero-art" viewBox="0 0 320 240" aria-hidden="true">
+        <defs>
+          <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#2f80ed"/><stop offset="1" stop-color="#7b5cff"/>
+          </linearGradient>
+        </defs>
+        <circle cx="160" cy="120" r="105" fill="url(#g1)" opacity=".12"/>
+        <!-- מסמך -->
+        <g transform="translate(70 40) rotate(-6)">
+          <rect width="120" height="155" rx="10" fill="#fff" stroke="#d7def0" stroke-width="2"/>
+          <rect x="16" y="18" width="60" height="10" rx="5" fill="#1e2a3a"/>
+          <rect x="16" y="34" width="40" height="6" rx="3" fill="#2f80ed"/>
+          <rect x="16" y="54" width="88" height="5" rx="2.5" fill="#d7def0"/>
+          <rect x="16" y="66" width="76" height="5" rx="2.5" fill="#d7def0"/>
+          <rect x="16" y="78" width="82" height="5" rx="2.5" fill="#d7def0"/>
+          <rect x="16" y="98" width="50" height="7" rx="3.5" fill="#1e2a3a" opacity=".7"/>
+          <rect x="16" y="112" width="88" height="5" rx="2.5" fill="#d7def0"/>
+          <rect x="16" y="124" width="70" height="5" rx="2.5" fill="#d7def0"/>
+        </g>
+        <!-- בועת צ'אט -->
+        <g transform="translate(170 70)">
+          <rect width="110" height="62" rx="16" fill="url(#g1)"/>
+          <path d="M22 62 L14 80 L40 62 Z" fill="#5b6ff7"/>
+          <circle cx="34" cy="31" r="6" fill="#fff"/><circle cx="55" cy="31" r="6" fill="#fff"/><circle cx="76" cy="31" r="6" fill="#fff"/>
+        </g>
+        <!-- ניצוצות -->
+        <path d="M262 160 l5 12 12 5 -12 5 -5 12 -5 -12 -12 -5 12 -5z" fill="#f5b400"/>
+        <path d="M58 36 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3z" fill="#f5b400"/>
+        <!-- גרף -->
+        <g transform="translate(200 160)">
+          <rect width="16" height="30" rx="3" fill="#2f80ed" opacity=".5"/>
+          <rect x="22" y="-14" width="16" height="44" rx="3" fill="#2f80ed" opacity=".75"/>
+          <rect x="44" y="-30" width="16" height="60" rx="3" fill="#2f80ed"/>
+        </g>
+      </svg>
+    </section>
+
+    <section class="choose">
+      <a class="big-btn cv" href="/cv/">
+        <span class="big-icon">📄</span>
+        <span class="big-title">מחולל קורות חיים</span>
+        <span class="big-desc">בעברית או באנגלית, בפורמט ישראלי</span>
       </a>
-      <a class="tool" href="biz.html">
-        <h2>📊 תכנית עסקית</h2>
-        <p>טיוטה לתכנית עסקית: קהל, מתחרים, מחירים ותחזית.</p>
+      <a class="big-btn plan" href="/plan/">
+        <span class="big-icon">📊</span>
+        <span class="big-title">מחולל תכנית עסקית</span>
+        <span class="big-desc">קהל, מתחרים, עלויות ותחזית ל-3 שנים</span>
       </a>
-    </div>
+    </section>
+
+    <section class="how">
+      <h2>איך זה עובד?</h2>
+      <ol class="steps">
+        <li><b>1</b><span>ממלאים שאלון קצר</span></li>
+        <li><b>2</b><span>מעתיקים את הפרומפט ל-ChatGPT או Claude</span></li>
+        <li><b>3</b><span>מדביקים את התשובה בחזרה באתר</span></li>
+        <li><b>4</b><span>עורכים ומורידים PDF מעוצב</span></li>
+      </ol>
+      <p class="hint center">המידע שלך נשאר רק בדפדפן שלך. אנחנו לא שומרים כלום.</p>
+    </section>
   </main>
-  <footer>BULU · שירות חינמי לציבור · <a href="privacy.html">פרטיות</a> · <a href="#" onclick="buluCookieSettings();return false">עוגיות</a></footer>
-  <script src="cookies.js"></script>
+  <footer><a href="https://bulu.ltd">BULU</a> · <a href="/privacy/">מדיניות פרטיות</a> · <a href="#" onclick="buluCookieSettings();return false">עוגיות</a></footer>
+  <script src="/assets/cookies.js"></script>
 </body>
 </html>

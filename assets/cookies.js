@@ -12,7 +12,7 @@ function buluCookieSettings() {
   bar.setAttribute('role', 'dialog');
   bar.innerHTML =
     '<p>האתר עשוי להשתמש בעוגיות לצורך פרסומות ומדידת שימוש. ' +
-    '<a href="privacy.html">פרטים במדיניות הפרטיות</a>.</p>' +
+    '<a href="/privacy/">פרטים במדיניות הפרטיות</a>.</p>' +
     '<div><button type="button" class="btn" data-c="all">מאשר</button> ' +
     '<button type="button" class="btn secondary" data-c="essential">רק הכרחיות</button></div>';
   bar.addEventListener('click', e => {
@@ -20,9 +20,11 @@ function buluCookieSettings() {
     if (!c) return;
     try { localStorage.setItem('bulu-consent', c); } catch (err) {}
     bar.remove();
+    document.body.style.paddingBottom = '';
     document.dispatchEvent(new CustomEvent('bulu-consent', { detail: c }));
   });
   document.body.append(bar);
+  document.body.style.paddingBottom = bar.offsetHeight + 'px';
 }
 
 if (!buluConsent()) {

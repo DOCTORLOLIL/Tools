@@ -1,5 +1,5 @@
-/* מנוע שאלונים משותף לכל המחוללים – BULU
-   כל מחולל מגדיר config עם: id, steps, buildPrompt(data)
+/* מנוע שאלונים ותוצאות משותף לכל המחוללים – BULU
+   כל מחולל מגדיר config עם: id, steps, buildPrompt(data), renderResult(obj, data)
    המידע נשמר רק בדפדפן של המשתמש (localStorage), לא נשלח לשום שרת. */
 
 function el(tag, attrs, ...children) {
@@ -22,16 +22,20 @@ function extractJSON(text) {
   return JSON.parse(s.slice(a, b + 1));
 }
 
+function loadData(id) {
+  try { return JSON.parse(localStorage.getItem('bulu-' + id)) || {}; } catch (e) { return {}; }
+}
+function saveData(id, data) {
+  try { localStorage.setItem('bulu-' + id, JSON.stringify(data)); } catch (e) {}
+}
+
+/* ===== שאלון ===== */
 function createWizard(config, root) {
-  const KEY = 'bulu-' + config.id;
-  let data = {};
-  try { data = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) {}
+  let data = loadData(config.id);
   let step = 0;
   const last = config.steps.length; // השלב האחרון = הפרומפט
+  const save = () => saveData(config.id, data);
 
-  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(data)); } catch (e) {} };
-
-  // שדה אחד
   function field(f, obj) {
     const id = 'f-' + Math.random().toString(36).slice(2);
     let input;
@@ -60,7 +64,6 @@ function createWizard(config, root) {
     );
   }
 
-  // שלב עם פריטים שחוזרים (משרות, לימודים...)
   function repeatBlock(r, body) {
     const list = data[r.id] = data[r.id] || [];
     if (!list.length) list.push({});
@@ -93,7 +96,7 @@ function createWizard(config, root) {
     root.append(el('div', { class: 'progress' },
       el('div', { class: 'bar', style: 'width:' + Math.round(step / last * 100) + '%' })));
     root.append(el('p', { class: 'stepnum' },
-      step < last ? `שלב ${step + 1} מתוך ${last}` : 'הפרומפט מוכן'));
+      step < last ? `שלב ${step + 1} מתוך ${last}` : 'כמעט סיימנו'));
 
     if (step === last) { renderPrompt(); return; }
 
@@ -120,10 +123,9 @@ function createWizard(config, root) {
 
   function renderPrompt() {
     const text = config.buildPrompt(data);
-    const ta = el('textarea', { class: 'prompt', rows: 14, readonly: '' });
+    const ta = el('textarea', { class: 'prompt', rows: 12, readonly: '' });
     ta.value = text;
     const status = el('span', { class: 'status' });
-
     const copy = async () => {
       try { await navigator.clipboard.writeText(text); }
       catch (e) { ta.select(); document.execCommand('copy'); }
@@ -132,10 +134,7 @@ function createWizard(config, root) {
 
     root.append(el('div', { class: 'card' },
       el('h2', {}, 'שלב 1: העתק את הפרומפט'),
-      el('ol', { class: 'howto' },
-        el('li', {}, 'לחץ "העתק פרומפט".'),
-        el('li', {}, 'פתח את ChatGPT או Claude.'),
-        el('li', {}, 'הדבק ושלח.')),
+      el('p', { class: 'intro' }, 'העתק, פתח את ChatGPT או Claude, הדבק ושלח.'),
       ta,
       el('div', { class: 'nav' },
         el('div', {},
@@ -147,39 +146,28 @@ function createWizard(config, root) {
           el('a', { class: 'btn secondary', href: 'https://claude.ai/new', target: '_blank', rel: 'noopener' }, 'Claude')))
     ));
 
-    // שלב 2: הדבקת התשובה מה-AI והצגה בתבנית
-    let showResult = null;
-    if (config.renderResult) {
-      const ans = el('textarea', { rows: 8, placeholder: 'הדבק כאן את כל התשובה שקיבלת' });
-      ans.value = data._answer || '';
-      ans.addEventListener('input', () => { data._answer = ans.value; save(); });
-      const err = el('p', { class: 'error' });
-
-      showResult = (scroll) => {
-        err.textContent = '';
-        root.querySelectorAll('.sheet, .print-bar').forEach(x => x.remove());
-        let obj;
-        try { obj = extractJSON(ans.value); }
-        catch (e) {
-          err.textContent = 'לא הצלחתי לקרוא את התשובה. ודא שהעתקת את כל התשובה, כולל החלק עם הסוגריים { }.';
-          return;
-        }
-        const sheet = config.renderResult(obj, data);
-        sheet.classList.add('sheet');
-        root.append(el('div', { class: 'nav print-bar' },
-          el('button', { type: 'button', class: 'btn', onclick: () => window.print() }, 'הורד PDF / הדפס'),
-          el('small', { class: 'hint' }, 'בחלון שנפתח בחר "שמור כ-PDF"')));
-        root.append(sheet);
-        if (scroll) sheet.scrollIntoView({ behavior: 'smooth' });
-      };
-
-      root.append(el('div', { class: 'card' },
-        el('h2', {}, 'שלב 2: הדבק את התשובה'),
-        el('p', { class: 'intro' }, 'העתק את כל התשובה שקיבלת מה-AI והדבק כאן.'),
-        ans, err,
-        el('div', { class: 'nav' },
-          el('button', { type: 'button', class: 'btn', onclick: () => showResult(true) }, config.resultLabel || 'הצג'))));
-    }
+    // שלב 2: הדבקת התשובה ומעבר לדף התוצאות
+    const ans = el('textarea', { rows: 8, placeholder: 'הדבק כאן את כל התשובה שקיבלת' });
+    ans.value = data._answer || '';
+    const err = el('p', { class: 'error' });
+    const go = () => {
+      err.textContent = '';
+      try { extractJSON(ans.value); }
+      catch (e) {
+        err.textContent = 'לא הצלחתי לקרוא את התשובה. ודא שהעתקת את כל התשובה, כולל החלק עם הסוגריים { }.';
+        return;
+      }
+      if (ans.value !== data._answer) data._edits = {}; // תשובה חדשה – מאפסים עריכות ידניות
+      data._answer = ans.value;
+      save();
+      location.href = '/results/?t=' + config.id;
+    };
+    root.append(el('div', { class: 'card' },
+      el('h2', {}, 'שלב 2: הדבק את התשובה'),
+      el('p', { class: 'intro' }, 'העתק את כל התשובה שקיבלת מה-AI והדבק כאן.'),
+      ans, err,
+      el('div', { class: 'nav' },
+        el('button', { type: 'button', class: 'btn', onclick: go }, config.resultLabel || 'הצג תוצאה'))));
 
     root.append(el('div', { class: 'nav' },
       el('button', { type: 'button', class: 'btn secondary', onclick: () => { step--; render(); } }, '→ חזרה לעריכה'),
@@ -187,14 +175,88 @@ function createWizard(config, root) {
         type: 'button', class: 'link danger',
         onclick: () => {
           if (confirm('למחוק את כל מה שמילאת ולהתחיל מחדש?')) {
-            data = {}; localStorage.removeItem(KEY); step = 0; render();
+            data = {}; localStorage.removeItem('bulu-' + config.id); step = 0; render();
           }
         }
       }, 'התחל מחדש')
     ));
     window.scrollTo(0, 0);
-    if (showResult && data._answer) showResult(false);
   }
 
   render();
+}
+
+/* ===== דף תוצאות עם עריכה לכל קטע ===== */
+function showResults(configs, root) {
+  const t = new URLSearchParams(location.search).get('t');
+  const config = configs[t];
+  const empty = msg => root.append(el('div', { class: 'card' },
+    el('h2', {}, msg),
+    el('p', {}, 'כדי לקבל תוצאה, מלא את אחד המחוללים:'),
+    el('div', { class: 'nav' },
+      el('a', { class: 'btn', href: '/cv/' }, 'קורות חיים'),
+      el('a', { class: 'btn', href: '/plan/' }, 'תכנית עסקית'))));
+
+  if (!config) { empty('לא נמצאה תוצאה'); return; }
+  const data = loadData(t);
+  let obj;
+  try { obj = extractJSON(data._answer || ''); } catch (e) { empty('עדיין אין תוצאה'); return; }
+  data._edits = data._edits || {};
+  const save = () => saveData(t, data);
+
+  document.title = (config.resultTitle || 'תוצאה') + ' | BULU';
+  const sheet = config.renderResult(obj, data);
+  sheet.classList.add('sheet');
+
+  root.append(el('div', { class: 'toolbar' },
+    el('a', { class: 'btn secondary', href: config.page }, '→ חזרה לשאלון'),
+    el('button', { type: 'button', class: 'btn', onclick: () => window.print() }, 'הורד PDF / הדפס'),
+    Object.keys(data._edits).length
+      ? el('button', {
+          type: 'button', class: 'link danger',
+          onclick: () => {
+            if (confirm('לבטל את כל העריכות הידניות ולחזור לתשובה המקורית?')) {
+              data._edits = {}; save(); location.reload();
+            }
+          }
+        }, 'בטל עריכות')
+      : null),
+    el('p', { class: 'hint center' }, 'לחץ ✎ ליד כל קטע כדי לערוך אותו. בהורדה בחר "שמור כ-PDF".'));
+  root.append(sheet);
+
+  sheet.querySelectorAll('[data-key]').forEach(sec => {
+    const key = sec.dataset.key;
+    if (data._edits[key] != null) sec.innerHTML = data._edits[key];
+    const wrap = el('div', { class: 'editable' });
+    sec.replaceWith(wrap);
+    const bar = el('div', { class: 'edit-bar' });
+    wrap.append(bar, sec);
+    let before = '';
+
+    const idle = () => {
+      bar.innerHTML = '';
+      bar.append(el('button', { type: 'button', class: 'edit-btn', title: 'עריכה', onclick: start }, '✎ ערוך'));
+    };
+    const start = () => {
+      before = sec.innerHTML;
+      sec.contentEditable = 'true';
+      wrap.classList.add('editing');
+      sec.focus();
+      bar.innerHTML = '';
+      bar.append(
+        el('button', { type: 'button', class: 'edit-btn save', onclick: finish }, '✓ שמור'),
+        el('button', { type: 'button', class: 'edit-btn', onclick: () => { sec.innerHTML = before; stop(); } }, 'בטל'));
+    };
+    const finish = () => {
+      data._edits[key] = sec.innerHTML;
+      save();
+      stop();
+    };
+    const stop = () => {
+      sec.contentEditable = 'false';
+      wrap.classList.remove('editing');
+      idle();
+    };
+    idle();
+  });
 }
