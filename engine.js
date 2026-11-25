@@ -178,7 +178,7 @@ function createWizard(config, root) {
         el('p', { class: 'intro' }, 'העתק את כל התשובה שקיבלת מה-AI והדבק כאן.'),
         ans, err,
         el('div', { class: 'nav' },
-          el('button', { type: 'button', class: 'btn', onclick: () => showResult(true) }, 'הצג קורות חיים'))));
+          el('button', { type: 'button', class: 'btn', onclick: () => showResult(true) }, config.resultLabel || 'הצג'))));
     }
 
     root.append(el('div', { class: 'nav' },

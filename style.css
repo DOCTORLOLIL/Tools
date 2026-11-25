@@ -94,3 +94,26 @@ fieldset.item legend { font-weight: bold; padding: 0 6px; }
   main { padding: 0; max-width: none; }
   .sheet { box-shadow: none; margin: 0; padding: 0; max-width: none; }
 }
+
+/* טבלאות ותכנית עסקית */
+.sheet table { width: 100%; border-collapse: collapse; margin: 4px 0 8px; font-size: 10pt; break-inside: avoid; }
+.sheet th, .sheet td { border: 1px solid #ddd; padding: 5px 8px; text-align: start; }
+.sheet th { background: #eef3fb; color: #1e2a3a; }
+.sheet tbody tr:last-child td { font-weight: normal; }
+.sheet p + p { margin-top: 6px; }
+.disclaimer { margin-top: 18px !important; font-size: 8.5pt; color: #888; border-top: 1px solid #eee; padding-top: 8px; }
+
+/* דף טקסט (פרטיות) */
+.text-page h2 { font-size: 1.2rem; margin-top: 24px; }
+footer a { color: #888; }
+
+/* באנר עוגיות */
+#cookie-bar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+  background: #1e2a3a; color: #fff; padding: 14px 18px;
+  display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap;
+  box-shadow: 0 -2px 10px rgba(0,0,0,.2);
+}
+#cookie-bar p { margin: 0; flex: 1 1 260px; }
+#cookie-bar a { color: #9cc3ff; }
+@media print { #cookie-bar { display: none !important; } }

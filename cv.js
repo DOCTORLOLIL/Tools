@@ -2,6 +2,7 @@
 
 const cvConfig = {
   id: 'cv',
+  resultLabel: 'הצג קורות חיים',
   steps: [
     {
       title: 'פרטים אישיים',
