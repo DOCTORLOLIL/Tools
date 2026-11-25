@@ -139,6 +139,59 @@ const cvConfig = {
     if (v(d.skills) || v(d.languages) || v(d.extra)) p += '\n';
     p += line('כישורים', d.skills) + line('שפות', d.languages) + line('נוסף', d.extra);
     return p;
+  },
+
+  // תבנית קורות החיים – מקבלת את ה-JSON מה-AI
+  renderResult(cv, d) {
+    const en = d.lang === 'en';
+    const s = x => (typeof x === 'string' ? x.trim() : '');
+    const arr = x => (Array.isArray(x) ? x.map(s).filter(Boolean) : []);
+    const svcName = { 'צבאי': 'Military Service', 'לאומי': 'National Service', 'אזרחי': 'Civil Service' };
+    const T = en
+      ? { summary: 'Profile', exp: 'Experience', svc: svcName[d.svcType] || 'Service', edu: 'Education',
+          skills: 'Skills', langs: 'Languages', extra: 'Additional' }
+      : { summary: 'תקציר', exp: 'ניסיון תעסוקתי', svc: d.svcType && d.svcType !== 'none' ? 'שירות ' + d.svcType : 'שירות',
+          edu: 'השכלה', skills: 'כישורים', langs: 'שפות', extra: 'נוסף' };
+
+    const section = (title, ...content) => {
+      content = content.filter(Boolean);
+      return content.length ? el('section', {}, el('h3', {}, title), ...content) : null;
+    };
+    const item = (head, sub, years, bullets) => el('div', { class: 'cv-item' },
+      el('div', { class: 'cv-row' }, el('strong', {}, head), years ? el('span', { class: 'cv-years' }, years) : null),
+      sub ? el('div', { class: 'cv-sub' }, sub) : null,
+      bullets.length ? el('ul', {}, ...bullets.map(b => el('li', {}, b))) : null);
+    const inline = list => (list.length ? el('p', {}, list.join(' · ')) : null);
+
+    const c = cv.contact || {};
+    const contact = [c.phone, c.email, c.city, c.linkedin].map(s).filter(Boolean);
+    const contactLine = el('div', { class: 'cv-contact' });
+    contact.forEach((x, i) => {
+      if (i) contactLine.append(' · ');
+      contactLine.append(el('span', { dir: 'auto' }, x));
+    });
+
+    const exp = (Array.isArray(cv.experience) ? cv.experience : [])
+      .filter(j => j && s(j.role))
+      .map(j => item(s(j.role), s(j.company), s(j.years), arr(j.bullets)));
+    const sv = cv.service;
+    const svc = sv && (s(sv.role) || s(sv.unit))
+      ? item(s(sv.role) || s(sv.unit), s(sv.role) ? s(sv.unit) : '', s(sv.years), arr(sv.bullets)) : null;
+    const edu = (Array.isArray(cv.education) ? cv.education : [])
+      .filter(e => e && s(e.degree))
+      .map(e => item(s(e.degree), [s(e.institution), s(e.notes)].filter(Boolean).join(' · '), s(e.years), []));
+
+    return el('div', { dir: en ? 'ltr' : 'rtl', lang: en ? 'en' : 'he' },
+      el('h2', { class: 'cv-name' }, s(cv.name) || s(d.fullName)),
+      s(cv.title) ? el('div', { class: 'cv-title' }, s(cv.title)) : null,
+      contactLine,
+      section(T.summary, s(cv.summary) ? el('p', {}, s(cv.summary)) : null),
+      section(T.exp, ...exp),
+      section(T.svc, svc),
+      section(T.edu, ...edu),
+      section(T.skills, inline(arr(cv.skills))),
+      section(T.langs, inline(arr(cv.languages))),
+      section(T.extra, inline(arr(cv.extra))));
   }
 };
 

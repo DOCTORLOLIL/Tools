@@ -13,6 +13,15 @@ function el(tag, attrs, ...children) {
   return e;
 }
 
+// מוציא את ה-JSON מתוך התשובה של ה-AI (גם אם יש טקסט מסביב)
+function extractJSON(text) {
+  const m = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+  const s = m ? m[1] : text;
+  const a = s.indexOf('{'), b = s.lastIndexOf('}');
+  if (a < 0 || b < a) throw new Error('no json');
+  return JSON.parse(s.slice(a, b + 1));
+}
+
 function createWizard(config, root) {
   const KEY = 'bulu-' + config.id;
   let data = {};
@@ -122,7 +131,7 @@ function createWizard(config, root) {
     };
 
     root.append(el('div', { class: 'card' },
-      el('h2', {}, 'הפרומפט שלך מוכן'),
+      el('h2', {}, 'שלב 1: העתק את הפרומפט'),
       el('ol', { class: 'howto' },
         el('li', {}, 'לחץ "העתק פרומפט".'),
         el('li', {}, 'פתח את ChatGPT או Claude.'),
@@ -138,6 +147,40 @@ function createWizard(config, root) {
           el('a', { class: 'btn secondary', href: 'https://claude.ai/new', target: '_blank', rel: 'noopener' }, 'Claude')))
     ));
 
+    // שלב 2: הדבקת התשובה מה-AI והצגה בתבנית
+    let showResult = null;
+    if (config.renderResult) {
+      const ans = el('textarea', { rows: 8, placeholder: 'הדבק כאן את כל התשובה שקיבלת' });
+      ans.value = data._answer || '';
+      ans.addEventListener('input', () => { data._answer = ans.value; save(); });
+      const err = el('p', { class: 'error' });
+
+      showResult = (scroll) => {
+        err.textContent = '';
+        root.querySelectorAll('.sheet, .print-bar').forEach(x => x.remove());
+        let obj;
+        try { obj = extractJSON(ans.value); }
+        catch (e) {
+          err.textContent = 'לא הצלחתי לקרוא את התשובה. ודא שהעתקת את כל התשובה, כולל החלק עם הסוגריים { }.';
+          return;
+        }
+        const sheet = config.renderResult(obj, data);
+        sheet.classList.add('sheet');
+        root.append(el('div', { class: 'nav print-bar' },
+          el('button', { type: 'button', class: 'btn', onclick: () => window.print() }, 'הורד PDF / הדפס'),
+          el('small', { class: 'hint' }, 'בחלון שנפתח בחר "שמור כ-PDF"')));
+        root.append(sheet);
+        if (scroll) sheet.scrollIntoView({ behavior: 'smooth' });
+      };
+
+      root.append(el('div', { class: 'card' },
+        el('h2', {}, 'שלב 2: הדבק את התשובה'),
+        el('p', { class: 'intro' }, 'העתק את כל התשובה שקיבלת מה-AI והדבק כאן.'),
+        ans, err,
+        el('div', { class: 'nav' },
+          el('button', { type: 'button', class: 'btn', onclick: () => showResult(true) }, 'הצג קורות חיים'))));
+    }
+
     root.append(el('div', { class: 'nav' },
       el('button', { type: 'button', class: 'btn secondary', onclick: () => { step--; render(); } }, '→ חזרה לעריכה'),
       el('button', {
@@ -150,6 +193,7 @@ function createWizard(config, root) {
       }, 'התחל מחדש')
     ));
     window.scrollTo(0, 0);
+    if (showResult && data._answer) showResult(false);
   }
 
   render();

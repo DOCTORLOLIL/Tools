@@ -67,3 +67,30 @@ fieldset.item legend { font-weight: bold; padding: 0 6px; }
 .status { color: #1a8f3c; font-weight: bold; margin-inline-start: 10px; }
 .howto { padding-inline-start: 20px; }
 .note { background: #fff8e1; border-radius: 8px; padding: 10px 14px; font-size: .9rem; color: #6b5800; }
+
+/* תבנית קורות חיים */
+.error { color: #d33; font-weight: bold; }
+.sheet {
+  background: #fff; max-width: 210mm; margin: 20px auto; padding: 16mm 15mm;
+  box-shadow: 0 2px 12px rgba(0,0,0,.15); color: #222; font-size: 10.5pt; line-height: 1.45;
+}
+.sheet .cv-name { margin: 0; font-size: 24pt; color: #1e2a3a; }
+.cv-title { color: #2f80ed; font-size: 13pt; margin: 2px 0 6px; }
+.cv-contact { color: #555; font-size: 9.5pt; border-bottom: 2px solid #2f80ed; padding-bottom: 10px; margin-bottom: 6px; }
+.sheet h3 { font-size: 12pt; color: #1e2a3a; border-bottom: 1px solid #ddd; padding-bottom: 3px; margin: 14px 0 8px; }
+.cv-item { margin-bottom: 9px; break-inside: avoid; }
+.cv-row { display: flex; justify-content: space-between; gap: 10px; }
+.cv-years { color: #777; white-space: nowrap; font-size: 9.5pt; }
+.cv-sub { color: #555; }
+.sheet ul { margin: 3px 0 0; padding-inline-start: 18px; }
+.sheet p { margin: 0; }
+@media (max-width: 600px) { .sheet { padding: 18px; } }
+
+/* הדפסה / PDF – רק קורות החיים */
+@media print {
+  @page { size: A4; margin: 12mm; }
+  body { background: #fff; }
+  body > header, body > footer, main > *:not(#app), #app > *:not(.sheet) { display: none !important; }
+  main { padding: 0; max-width: none; }
+  .sheet { box-shadow: none; margin: 0; padding: 0; max-width: none; }
+}
